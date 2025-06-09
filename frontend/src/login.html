@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comet Notes - Smart Note Taking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Header -->
+    <nav class="bg-white shadow-sm">
+      <div class="max-w-6xl mx-auto px-4 py-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center">
+            <!-- Comet SVG Logo -->
+            <div class="w-8 h-8">
+              <svg
+                version="1.0"
+                xmlns="http://www.w3.org/2000/svg"
+                width="100%"
+                height="100%"
+                viewBox="0 0 300 225"
+                preserveAspectRatio="xMidYMid meet"
+              >
+                <g
+                  transform="translate(0,225) scale(0.1,-0.1)"
+                  fill="#2563eb"
+                  stroke="none"
+                >
+                  <!-- your SVG paths here -->
+                </g>
+              </svg>
+            </div>
+            <span class="ml-2 text-2xl font-bold text-blue-600"
+              >Comet Notes</span
+            >
+          </div>
+          <div class="space-x-4">
+            <button id="open-login" class="text-gray-600 hover:text-blue-600">
+              Login
+            </button>
+            <button
+              id="open-register"
+              class="text-gray-600 hover:text-blue-600"
+            >
+              Register
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-20">
+      <div class="max-w-6xl mx-auto px-4 text-center">
+        <h1 class="text-5xl font-bold mb-6 text-gray-800">
+          Organize Your Thoughts with Comet Notes
+        </h1>
+        <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          Capture ideas instantly, access anywhere, and never forget a thought
+          again. The smart way to manage your notes across all devices.
+        </p>
+        <div class="space-x-4">
+          <button
+            id="hero-register"
+            class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700"
+          >
+            Get Started Free
+          </button>
+          <button
+            class="bg-gray-100 text-gray-800 px-8 py-3 rounded-lg hover:bg-gray-200"
+          >
+            Learn More
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-white">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="p-6">
+            <div class="text-blue-600 text-4xl mb-4">🖋️</div>
+            <h3 class="text-xl font-bold mb-2">Powerful Text Editor</h3>
+            <p class="text-gray-600">
+              Write and format with ease using our advanced editor features.
+            </p>
+          </div>
+          <div class="p-6">
+            <div class="text-blue-600 text-4xl mb-4">📦</div>
+            <h3 class="text-xl font-bold mb-2">Block‑Style Notes</h3>
+            <p class="text-gray-600">
+              Organize content in movable blocks for ultimate flexibility.
+            </p>
+          </div>
+          <div class="p-6">
+            <div class="text-blue-600 text-4xl mb-4">📅</div>
+            <h3 class="text-xl font-bold mb-2">Calendar &amp; Tasks</h3>
+            <p class="text-gray-600">
+              Keep track of deadlines and to‑dos directly within your notes.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal Backdrop -->
+    <div
+      id="modal-backdrop"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden"
+    ></div>
+    <!-- Auth Modal -->
+    <div
+      id="auth-modal"
+      class="fixed inset-0 flex items-center justify-center hidden"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-md w-80">
+        <div class="flex justify-center mb-4">
+          <button
+            id="tab-login"
+            class="px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600"
+          >
+            Login
+          </button>
+          <button
+            id="tab-register"
+            class="ml-4 px-4 py-2 font-medium text-gray-500 hover:text-blue-600"
+          >
+            Register
+          </button>
+        </div>
+
+        <!-- Login Container -->
+        <div id="login-container">
+          <h2 class="text-xl font-bold mb-4 text-center">Welcome Back</h2>
+          <form id="login-form" class="space-y-4">
+            <input
+              id="identifier"
+              type="text"
+              placeholder="Username or Email"
+              class="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            <input
+              id="password"
+              type="password"
+              placeholder="Password"
+              class="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            <button
+              type="submit"
+              class="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
+            >
+              Login
+            </button>
+          </form>
+          <div class="my-4 flex items-center">
+            <hr class="flex-grow border-gray-300" />
+            <span class="px-2 text-gray-400">or</span>
+            <hr class="flex-grow border-gray-300" />
+          </div>
+          <button
+            id="google-login"
+            class="w-full flex items-center justify-center py-2 border rounded gap-2 hover:bg-gray-50"
+          >
+            Continue with Google
+          </button>
+          <p class="mt-4 text-sm text-center text-gray-600">
+            New here?
+            <a href="#" id="link-register" class="text-blue-500 font-medium"
+              >Create account</a
+            >
+          </p>
+        </div>
+
+        <!-- Register Container -->
+        <div id="register-container" class="hidden">
+          <h2 class="text-xl font-bold mb-4 text-center">Get Started</h2>
+          <form id="register-form" class="space-y-4">
+            <input
+              id="reg-username"
+              type="text"
+              placeholder="Username"
+              class="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            <input
+              id="reg-email"
+              type="email"
+              placeholder="Email"
+              class="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            <input
+              id="reg-password"
+              type="password"
+              placeholder="Password"
+              class="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+            />
+            <button
+              type="submit"
+              class="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600"
+            >
+              Register
+            </button>
+          </form>
+          <p class="mt-4 text-sm text-center text-gray-600">
+            Have an account?
+            <a href="#" id="link-login" class="text-blue-500 font-medium"
+              >Sign in</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/login.js"></script>
+    <script>
+      const backdrop = document.getElementById("modal-backdrop");
+      const modal = document.getElementById("auth-modal");
+      const openL = document.getElementById("open-login");
+      const openR = document.getElementById("open-register");
+      const tabL = document.getElementById("tab-login");
+      const tabR = document.getElementById("tab-register");
+      const contL = document.getElementById("login-container");
+      const contR = document.getElementById("register-container");
+      const linkR = document.getElementById("link-register");
+      const linkL = document.getElementById("link-login");
+      const heroR = document.getElementById("hero-register");
+
+      function showModal(isLogin = true) {
+        backdrop.classList.remove("hidden");
+        modal.classList.remove("hidden");
+        selectTab(isLogin);
+      }
+      function hideModal() {
+        backdrop.classList.add("hidden");
+        modal.classList.add("hidden");
+      }
+      function selectTab(isLogin) {
+        if (isLogin) {
+          tabL.classList.replace("text-gray-500", "text-blue-600");
+          tabL.classList.add("border-b-2", "border-blue-600");
+          tabR.classList.replace("text-blue-600", "text-gray-500");
+          tabR.classList.remove("border-b-2", "border-blue-600");
+          contL.classList.remove("hidden");
+          contR.classList.add("hidden");
+        } else {
+          tabR.classList.replace("text-gray-500", "text-blue-600");
+          tabR.classList.add("border-b-2", "border-blue-600");
+          tabL.classList.replace("text-blue-600", "text-gray-500");
+          tabL.classList.remove("border-b-2", "border-blue-600");
+          contR.classList.remove("hidden");
+          contL.classList.add("hidden");
+        }
+      }
+
+      backdrop.onclick = hideModal;
+      openL.onclick = () => showModal(true);
+      openR.onclick = () => showModal(false);
+      tabL.onclick = () => selectTab(true);
+      tabR.onclick = () => selectTab(false);
+      linkR.onclick = (e) => {
+        e.preventDefault();
+        selectTab(false);
+      };
+      linkL.onclick = (e) => {
+        e.preventDefault();
+        selectTab(true);
+      };
+      heroR.onclick = () => showModal(false);
+    </script>
+  </body>
+</html>

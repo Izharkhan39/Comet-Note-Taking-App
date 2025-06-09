@@ -1,0 +1,51 @@
+/* Fixed height for cover container */
+#cover-image-container {
+  height: 200px !important;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Style for the image */
+#cover-image {
+  width: 100%;
+  position: absolute;
+  transition: top 0.1s ease;
+}
+
+/* Remove transition during active dragging for better performance */
+#cover-image.dragging {
+  transition: none;
+}
+
+/* Make sure the editor stays separate */
+#editor-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hover effect for controls */
+#top-controls {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+#cover-image-container:hover #top-controls {
+  opacity: 1;
+}
+
+#cover-image {
+  width: 100%;
+  /* Remove the fixed height imposed by h-52 */
+  height: auto !important;
+  position: absolute;
+  transition: top 0.1s ease;
+  /* Optionally, remove object-fit if it's applied via object-cover */
+  object-fit: initial !important;
+}
+#reposition-overlay {
+  pointer-events: none;
+}
+#save-controls {
+  z-index: 30; /* or any number higher than 20 */
+}

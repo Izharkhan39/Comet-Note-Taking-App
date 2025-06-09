@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comet Notes</title>
+    <link href="./output.css" rel="stylesheet" />
+    <link href="./accMenu-pop-up.css" rel="stylesheet" />
+    <link href="./addCoverStyle.css" rel="stylesheet" />
+    <link href="./customEditorjs.css" rel="stylesheet" />
+    <link href="./sidebarScroll.css" rel="stylesheet" />
+    <link href="./settings.css" rel="stylesheet" />
+  </head>
+  <body class="h-screen flex max-md:flex-col font-sans leading-relaxed">
+    <script>
+      // Check if a token is passed as a query parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("token");
+      if (token) {
+        localStorage.setItem("token", token);
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+      }
+    </script>
+
+    <!-- Sidebar Container -->
+    <div
+      id="sidebar-container"
+      class="block max-md:hidden h-screen transition-all duration-300"
+    >
+      <div id="sidebar-content" class="p-2 h-full">
+        <!-- Sidebar Header -->
+        <div
+          id="sidebar-header"
+          class="relative flex items-center justify-between p-3 rounded-md bg-[rgb(236,240,241)] text-gray-700 hover:bg-[rgb(222,226,228)] transition-colors cursor-pointer"
+        >
+          <!-- Username & Avatar -->
+          <div
+            id="account-toggle"
+            class="flex items-center gap-2 px-3 py-2 rounded-md bg-[rgb(189,195,199)] hover:bg-[rgb(173,179,184)] transition-colors"
+          >
+            <!-- Avatar -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-8 h-8 text-gray-700"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <circle cx="12" cy="10" r="3" />
+              <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
+            </svg>
+
+            <!-- Username -->
+            <span id="username-display" class="text-base font-medium">
+              Jane Smith
+            </span>
+
+            <!-- Down Arrow -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 text-gray-700"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+
+          <!-- Collapse Button -->
+          <button
+            id="collapse-sidebar"
+            class="flex items-center justify-center p-2 rounded-md bg-[rgb(149,165,166)] hover:bg-[rgb(136,153,153)] transition-colors text-white"
+            aria-label="Collapse Sidebar"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <path d="M11 17l-5-5 5-5" />
+              <path d="M18 17l-5-5 5-5" />
+            </svg>
+          </button>
+
+          <!-- Pop-up Menu -->
+          <div
+            id="header-popup-menu"
+            class="hidden absolute top-full right-0 mt-2 w-64 bg-white rounded-md shadow-lg overflow-hidden z-10"
+          >
+            <!-- Profile -->
+            <div
+              class="flex items-center gap-3 p-4 bg-[rgb(236,240,241)] border-b"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-12 h-12 text-gray-700"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="10" r="3" />
+                <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
+              </svg>
+              <div>
+                <div
+                  id="popup-username"
+                  class="text-lg font-semibold text-gray-800"
+                >
+                  Jane Smith
+                </div>
+                <div id="popup-email" class="text-sm text-gray-500">
+                  jane@example.com
+                </div>
+              </div>
+            </div>
+            <!-- Menu Items -->
+            <ul class="text-sm">
+              <li
+                id="settings-option"
+                class="px-4 py-3 hover:bg-[rgb(222,226,228)] cursor-pointer transition-colors"
+              >
+                Settings
+              </li>
+              <li
+                id="add-account-option"
+                class="px-4 py-3 hover:bg-[rgb(222,226,228)] cursor-pointer transition-colors"
+              >
+                Add Another Account
+              </li>
+              <li
+                id="logout-option"
+                class="px-4 py-3 hover:bg-[rgb(222,226,228)] cursor-pointer transition-colors"
+              >
+                Log Out
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Sidebar Tabs -->
+        <nav id="sidebar-tabs" class="mt-4 mb-2 font-medium">
+          <ul class="space-y-0.5">
+            <!-- Home Tab -->
+            <li
+              class="tab flex items-center gap-2 px-2 py-3 rounded-md cursor-pointer text-gray-500 hover:bg-gray-300 transition-colors"
+              data-view="home-view"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
+                <path
+                  d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                ></path>
+              </svg>
+              <span class="text-base">Home</span>
+            </li>
+
+            <!-- Search Tab -->
+            <li
+              class="tab flex items-center gap-2 px-2 py-3 rounded-md cursor-pointer text-gray-500 hover:bg-gray-300 transition-colors"
+              data-view="search-view"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.3-4.3"></path>
+              </svg>
+              <span class="text-base">Search</span>
+            </li>
+
+            <!-- Calendar & Tasks Side-by-Side (full width) -->
+            <li>
+              <div class="flex gap-2 mt-4">
+                <!-- Calendar Tab -->
+                <div
+                  class="tab flex-1 flex items-center justify-center gap-2 px-2 py-3 rounded-md cursor-pointer text-white bg-orange-500 hover:bg-orange-600 transition-colors"
+                  data-view="calendar-view"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M8 2v4"></path>
+                    <path d="M16 2v4"></path>
+                    <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                    <path d="M3 10h18"></path>
+                    <path d="M8 14h.01"></path>
+                    <path d="M12 14h.01"></path>
+                    <path d="M16 14h.01"></path>
+                    <path d="M8 18h.01"></path>
+                    <path d="M12 18h.01"></path>
+                    <path d="M16 18h.01"></path>
+                  </svg>
+                  <span class="text-base">Calendar</span>
+                </div>
+
+                <!-- Tasks Tab -->
+                <div
+                  class="tab flex-1 flex items-center justify-center gap-2 px-2 py-3 rounded-md cursor-pointer text-white bg-purple-500 hover:bg-purple-600 transition-colors"
+                  data-view="tasks-view"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle cx="12" cy="13" r="8"></circle>
+                    <path d="M5 3L2 6"></path>
+                    <path d="M22 6l-3-3"></path>
+                    <path d="M6.38 18.7L4 21"></path>
+                    <path d="M17.64 18.67L20 21"></path>
+                    <path d="M9 13l2 2 4-4"></path>
+                  </svg>
+                  <span class="text-base">Tasks</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="quickfunctions"></div>
+
+        <div class="notes-wrapper"></div>
+        <!-- Notes Container -->
+        <div id="notes-container" class="">
+          <!-- Private Category -->
+          <div class="notes-category" data-category="private">
+            <button
+              class="new-page-btn notes-category-header flex items-center justify-center w-full px-4 py-3 rounded text-white bg-green-500 text-base font-bold transition-colors hover:bg-green-600 cursor-pointer"
+              aria-label="Create Notes"
+            >
+              <span class="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-6 h-6"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-file-plus2-icon lucide-file-plus-2"
+                >
+                  <path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4" />
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                  <path d="M3 15h6" />
+                  <path d="M6 12v6" />
+                </svg>
+                Create Notes
+                <!-- <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="M12 5v14"></path>
+                </svg> -->
+              </span>
+            </button>
+            <ul class="page-list mt-2 space-y-0.5 text-gray-500">
+              <!-- Private notes will be rendered here -->
+            </ul>
+          </div>
+          <!-- Favorites Category -->
+          <div class="notes-category mt-4" data-category="favorites">
+            <div
+              class="notes-category-header flex items-center justify-between p-1 rounded text- text-gray-500 text-sm font-bold hover:bg-gray-100 transition-colors cursor-pointer"
+            >
+              <span>Favorites</span>
+              <button
+                class="new-page-btn flex items-center p-1 rounded hover:bg-gray-300 transition-colors"
+                aria-label="favorites-notes"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="M12 5v14"></path>
+                </svg>
+              </button>
+            </div>
+            <ul class="page-list mt-2 space-y-0.5 text-gray-500">
+              <!-- Favorite notes will be rendered here -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resizer Handle -->
+    <div
+      id="resizer"
+      class="block max-md:hidden w-1 bg-gray-50 hover:bg-gray-300 cursor-ew-resize transition-all duration-300"
+    ></div>
+
+    <!-- Main Content -->
+    <div
+      id="main-content"
+      class="flex-1 flex flex-col overflow-hidden bg-white shadow-md transition-all duration-300"
+    >
+      <!-- Header -->
+      <div
+        id="header"
+        class="sticky top-0 w-full flex items-center p- z-50 bg-white"
+      >
+        <button
+          id="expand-sidebar"
+          class="hidden max-md:block p-1 rounded hover:bg-gray-100 transition-colors"
+          aria-label="expand-sidebar"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            viewBox="0 0 24 24"
+          >
+            <path d="M6 17l5-5-5-5"></path>
+            <path d="M13 17l5-5-5-5"></path>
+          </svg>
+        </button>
+        <h6
+          id="note-title"
+          class="flex-1 truncate text-2xl font-bold cursor-pointer hover:bg-gray-100 p-2 rounded"
+        >
+          This is a very long note title that will be truncated
+        </h6>
+
+        <!-- Export button -->
+        <div class="relative inline-block text-left">
+          <button
+            id="export-toggle"
+            class="text-black hover:bg-gray-300 px-4 py-2 rounded-md"
+          >
+            Share ▼
+          </button>
+
+          <div
+            id="export-menu"
+            class="hidden absolute right-0 mt-2 w-50 bg-white border rounded-md shadow-lg z-10"
+          >
+            <button
+              id="export-pdf"
+              class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+            >
+              Export as PDF
+            </button>
+            <button
+              id="export-md"
+              class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+            >
+              Export as Markdown
+            </button>
+            <button
+              id="export-txt"
+              class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+            >
+              Export as TXT
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- View Container -->
+      <div id="view-container" class="flex-1 overflow-y-auto">
+        <!-- Home View -->
+        <div id="home-view" class="view-content p-4">
+          <div class="loading-placeholder">
+            <p class="text-gray-500">Loading home content...</p>
+          </div>
+        </div>
+
+        <!-- Search View -->
+        <div id="search-view" class="view-content hidden p-4">
+          <h2 class="text-3xl font-bold mb-4">Search</h2>
+          <div class="search-container">
+            <input
+              id="search-input"
+              type="text"
+              class="w-full p-2 border rounded"
+              placeholder="Search notes..."
+            />
+            <div id="search-results" class="space-y-1"></div>
+          </div>
+        </div>
+
+        <div id="calendar-view" class="view-content hidden p-4">
+          <h2 class="text-3xl font-bold mb-4">Calendar</h2>
+
+          <div class="calendar-container">
+            <div
+              id="calendar"
+              class="bg-white rounded shadow p-4 min-h-[500px]"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Tasks View -->
+        <div id="tasks-view" class="view-content hidden p-4">
+          <h2 class="text-3xl font-bold mb-4">Tasks</h2>
+          <div class="tasks-container space-y-2"></div>
+        </div>
+
+        <!-- Editor View -->
+        <div id="editor-view" class="view-content hidden flex-col">
+          <!-- Cover Area -->
+          <!-- Cover Area -->
+          <div id="cover-area" class="w-full">
+            <!-- Cover Placeholder -->
+            <div
+              id="cover-placeholder"
+              class="w-full h-52 flex items-center justify-center bg-gray-100"
+            >
+              <button
+                id="add-cover-btn"
+                class="px-4 py-2 rounded hover:bg-gray-200 transition-colors"
+              >
+                Add Cover
+              </button>
+            </div>
+
+            <!-- Cover Image Container -->
+            <div
+              id="cover-image-container"
+              class="relative hidden w-full h-52 overflow-hidden"
+            >
+              <img
+                id="cover-image"
+                src="https://images.unsplash.com/photo-1579546928687-3cb3b8ef3dd1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+                alt="Cover Image"
+                class="w-full"
+              />
+              <!-- Top Controls -->
+              <div
+                id="top-controls"
+                class="flex absolute top-2 right-2 z-10 opacity-0 rounded transition-opacity duration-200 text-xs bg-transparent"
+              >
+                <button
+                  id="reposition-btn"
+                  class="px-2 py-1 bg-white bg-opacity-70 rounded hover:bg-opacity-90 transition-colors text-sm border"
+                >
+                  Reposition
+                </button>
+                <button
+                  id="remove-cover-btn"
+                  class="px-2 py-1 bg-white bg-opacity-70 rounded hover:bg-opacity-90 transition-colors text-sm border"
+                >
+                  Remove
+                </button>
+              </div>
+              <!-- Save Controls -->
+              <div
+                id="save-controls"
+                class="absolute top-2 right-2 z-10 hidden"
+              >
+                <button
+                  id="save-position-btn"
+                  class="px-2 py-1 bg-white rounded hover:bg-blue-600 transition-colors text-sm"
+                >
+                  Save
+                </button>
+              </div>
+              <!-- Reposition Overlay -->
+              <div
+                id="reposition-overlay"
+                class="absolute inset-0 bg-opacity-10 hidden z-20"
+              >
+                <div
+                  class="absolute bottom-4 left-2 right-0 text-center text-white text-sm font-medium"
+                >
+                  Drag to reposition
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Editor.js Container -->
+          <div id="editor-container" class="flex-1">
+            <div id="editorjs" class="p-4 rounded bg-white">
+              <!-- Editor.js content will be injected here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="js/editor.js"></script>
+    <script type="module" src="js/script.js"></script>
+    <script type="module" src="js/resizer.js"></script>
+    <script type="module" src="js/headerMenu.js"></script>
+    <script type="module" src="js/AddCover.js"></script>
+    <script type="module" src="js/viewManager.js"></script>
+    <script type="module" src="js/settings.js"></script>
+    <script type="module" src="js/calendar.js"></script>
+    <script type="module" src="js/tasksFetch.js"></script>
+    <script type="module" src="js/TaskModal.js"></script>
+    <script type="module" src="js/searchNotes.js"></script>
+    <script type="module" src="js/export.js"></script>
+    <script type="module" src="js/export.js"></script>
+    <script type="module" src="js/buttonHandler.js"></script>
+
+    <!-- Settings Modal -->
+    <div
+      id="settings-modal"
+      class="fixed inset-0 flex items-center justify-center backdrop-brightness-40 backdrop hidden z-50"
+    >
+      <div
+        id="settings-content"
+        class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-2xl relative"
+      >
+        <!-- Close Button -->
+        <button
+          id="close-modal"
+          class="absolute top-3 right-3 text-gray-600 dark:text-gray-300 text-2xl"
+        >
+          &times;
+        </button>
+
+        <!-- Modal Header -->
+        <h2
+          class="text-lg font-semibold text-gray-900 dark:text-white border-b pb-2"
+        >
+          Settings
+        </h2>
+
+        <div class="flex mt-4">
+          <!-- Sidebar -->
+          <div class="w-1/3 border-r pr-4">
+            <ul class="space-y-3">
+              <li
+                class="cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                data-section="account"
+              >
+                Account
+              </li>
+              <li
+                class="cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                data-section="appearance"
+              >
+                Appearance
+              </li>
+              <li
+                class="cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                data-section="preferences"
+              >
+                Preferences
+              </li>
+              <li
+                class="cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                data-section="security"
+              >
+                Security
+              </li>
+            </ul>
+          </div>
+
+          <!-- Settings Content -->
+          <div class="w-2/3 pl-4">
+            <!-- Account Settings -->
+            <div class="settings-section" id="account">
+              <h3
+                class="text-lg font-medium text-gray-800 dark:text-white mb-2"
+              >
+                Account
+              </h3>
+              <div class="flex justify-between items-center">
+                <label class="text-gray-600 dark:text-gray-300"
+                  >Username:</label
+                >
+                <div
+                  id="settings-username"
+                  class="font-semibold text-left"
+                ></div>
+              </div>
+              <div class="flex justify-between items-center mt-2">
+                <label class="text-gray-600 dark:text-gray-300">Email:</label>
+                <div id="settings-email" class="font-semibold"></div>
+              </div>
+            </div>
+
+            <!-- Appearance Settings -->
+            <div class="settings-section hidden" id="appearance">
+              <h3
+                class="text-lg font-medium text-gray-800 dark:text-white mb-2"
+              >
+                Appearance
+              </h3>
+              <div class="flex justify-between items-center">
+                <label class="text-gray-600 dark:text-gray-300"
+                  >Dark Mode:</label
+                >
+                <input type="checkbox" id="dark-mode-toggle" />
+              </div>
+            </div>
+
+            <!-- Preferences -->
+            <div class="settings-section hidden" id="preferences">
+              <h3
+                class="text-lg font-medium text-gray-800 dark:text-white mb-2"
+              >
+                Preferences
+              </h3>
+              <div class="flex justify-between items-center">
+                <label class="text-gray-600 dark:text-gray-300"
+                  >Language:</label
+                >
+                <select
+                  id="language"
+                  class="border rounded px-3 py-1 w-1/2 dark:bg-gray-700 dark:text-white"
+                >
+                  <option value="en">English</option>
+                  <option value="es">Español</option>
+                  <option value="fr">Français</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="settings-section hidden" id="security">
+              <h3
+                class="text-lg font-medium text-gray-800 dark:text-white mb-2"
+              >
+                Security
+              </h3>
+              <button
+                id="change-password"
+                class="bg-blue-500 text-white px-4 py-1 rounded mt-2"
+              >
+                Change Password
+              </button>
+              <button
+                id="logout-all"
+                class="bg-red-500 text-white px-4 py-1 rounded mt-2 ml-2"
+              >
+                Logout from All Devices
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Close Button (Bottom) -->
+        <div class="flex justify-end mt-4">
+          <button
+            id="close-modal-btn"
+            class="bg-gray-300 px-4 py-1 rounded dark:bg-gray-600 dark:text-white"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendar Modal -->
+    <!-- Task Modal -->
+    <div
+      id="task-modal"
+      class="fixed inset-0 flex items-center justify-center backdrop-brightness-40 backdrop hidden z-50"
+    >
+      <div
+        id="task-content"
+        class="bg-white p-4 rounded-lg shadow-md max-w-2xl max-h-[100vh] overflow-auto relative"
+      >
+        <!-- Close Button -->
+        <button
+          id="task-close-btn"
+          class="absolute top-2 right-2 text-gray-600"
+        >
+          &times;
+        </button>
+
+        <!-- Modal Header -->
+        <h3
+          id="modal-title"
+          class="text-lg font-medium text-gray-900 border-b pb-2 mb-3"
+        >
+          New Task
+        </h3>
+
+        <!-- Form -->
+        <form id="task-form" class="space-y-3">
+          <!-- Title -->
+          <div>
+            <label for="task-title" class="block text-sm text-gray-700">
+              Title
+            </label>
+            <input
+              type="text"
+              id="task-title"
+              required
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-white"
+            />
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label for="task-desc" class="block text-sm text-gray-700">
+              Description
+            </label>
+            <textarea
+              id="task-desc"
+              rows="2"
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-white"
+            ></textarea>
+          </div>
+
+          <!-- Date & Time -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="task-date" class="block text-sm text-gray-700">
+                Date
+              </label>
+              <input
+                type="date"
+                id="task-date"
+                required
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-white"
+              />
+            </div>
+            <div>
+              <label for="task-time" class="block text-sm text-gray-700">
+                Time
+              </label>
+              <input
+                type="time"
+                id="task-time"
+                class="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-white"
+              />
+            </div>
+          </div>
+
+          <!-- Reminder -->
+          <div>
+            <label class="inline-flex items-center text-gray-700">
+              <input
+                type="checkbox"
+                id="task-reminder"
+                class="form-checkbox h-4 w-4 border-gray-300"
+              />
+              <span class="ml-2 text-sm">Set Reminder</span>
+            </label>
+          </div>
+
+          <!-- Buttons -->
+          <div
+            class="flex justify-end gap-2 py-2 px-2 border-t border-gray-200"
+          >
+            <!-- Delete Button (optional hidden) -->
+            <button
+              type="button"
+              id="delete-task-btn"
+              class="px-4 py-1 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 hidden"
+            >
+              Delete
+            </button>
+
+            <!-- Cancel Button -->
+            <button
+              type="button"
+              id="cancel-btn"
+              class="px-4 py-1 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300"
+            >
+              Cancel
+            </button>
+
+            <!-- Save Button -->
+            <button
+              type="submit"
+              id="save-btn"
+              class="px-4 py-1 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
